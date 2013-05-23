@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html lang="en">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="https://apis.google.com/js/client.js"></script>
+		<script src="http://code.jquery.com/jquery-1.9.0.min.js" type="text/javascript"></script>
+		<script src="https://raw.github.com/jquery/jquery-color/master/jquery.color.js" type="text/javascript"></script>
+		<script src="http://fgnass.github.com/spin.js/dist/spin.min.js" type="text/javascript"></script>
+		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/js/bootstrap.min.js"></script>		
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="css/style.css" type="text/css" />
+		<link rel="stylesheet" href="css/graph.css" type="text/css" />
+		<link rel="stylesheet" href="css/viewer.css" type="text/css" />
+		<script src="http://d3js.org/d3.v3.min.js"></script>	
+		<script src="https://raw.github.com/OliverWS/js/master/numjs.js" type="text/javascript"></script>
+		<script src="https://raw.github.com/OliverWS/js/master/dropzone.js" type="text/javascript"></script>
+		<script src="https://raw.github.com/OliverWS/js/master/grapher.js" type="text/javascript"></script>
+		<script src="https://raw.github.com/OliverWS/js/master/eda_toolkit.js" type="text/javascript"></script>
+		<script src="https://raw.github.com/OliverWS/js/master/edadroplet.js" type="text/javascript"></script>
+		<script src="https://raw.github.com/OliverWS/js/master/videodroplet.js" type="text/javascript"></script>
+		<link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
+		<script src="http://vjs.zencdn.net/c/video.js"></script>
+		<style>
+			#videoDrop {
+				height: 320px;
+			}
+			#edaDrop, #edaDrop2, #edaDrop3 {
+				height: 250px;
+			}
+			.top-container {
+				//border: 6px solid #C8C8C8;
+				//border-bottom-width: 10px;
+				//background: #EEE;
+				border-top-right-radius: 3px;
+				border-top-left-radius: 3px;
+			}
+			.controls {
+				//border-right: 6px solid #C8C8C8;
+			}
+			.graph-container {
+				//background: #f5f5f5;
+				
+				
+			}
+			.bottom-container {
+				//border: 6px solid #C8C8C8;
+				border-bottom-right-radius: 3px;
+				border-bottom-left-radius: 3px;
+				
+			}
+					
+		</style>
+	</head>
+	<body>
+		
+		<div class="container-fluid">
+				<div class="header">
+					<h1>EDA Viewer <small>v.0.1</small></h1>
+					<hr />
+				</div>
+				<div class="row-fluid">
+				<div class="span12">
+					<div class="row-fluid top-container" style="">
+						<div id="videoDrop" class="span8 offset2" >
+							
+						</div>
+						
+					</div>
+					<div class="row-fluid bottom-container" style="">
+						<div class="row-fluid graph-container">
+							<div id="edaDrop" class="span12" >
+								
+							</div>
+							
+						</div>
+
+					</div>
+				</div>
+				</div>
+			<footer>
+				<p>Created by <a href="http://ollie.ws">Oliver Wilder-Smith</a></p>
+			
+			</footer>
+		
+		</div>
+		
+	</body>
+	<script type="text/javascript">
+		var edaFile, grapher, spreadsheet, edaDrop, edaDrop2, edaDrop3, csv,player;
+		
+		
+		
+		$(document).on("ready", function() {
+			edaDrop = new EDADroplet("edaDrop", function(e) {
+				edaDrop.grapher.onzoom = function(s,e,t) {
+					console.log("edaDrop1 | Start: " + s + " End: " + e);
+					edaDrop2.grapher.zoom(s,e,t);
+					edaDrop3.grapher.zoom(s,e,t);	
+	
+				};
+			
+			});
+			edaDrop2 = new EDADroplet("edaDrop2", function(e) {
+				edaDrop2.grapher.onzoom = function(s,e,t) {
+					console.log("edaDrop2 | Start: " + s + " End: " + e);
+					edaDrop.grapher.zoom(s,e,t);
+					edaDrop3.grapher.zoom(s,e,t);	
+				};
+			});
+			
+			edaDrop3 = new EDADroplet("edaDrop3", function(e) {
+				edaDrop3.grapher.onzoom = function(s,e,t) {
+					console.log("edaDrop3 | Start: " + s + " End: " + e);
+					edaDrop2.grapher.zoom(s,e,t);
+					edaDrop.grapher.zoom(s,e,t);	
+				};
+			});
+
+			videoDrop = new VideoDroplet("videoDrop", setupHandlers);
+			
+			
+		});
+		
+		var setupHandlers = function(vplayer) {
+			player = vplayer;
+			console.log("Video Width: " + $("video").width());
+			$("video").attr("height", 320);
+			$("video").attr("width", "auto");
+			$("#videoDrop").css("margin-left", ($(".top-container").width() - $("video").width())/2);
+			player.addEvent("timeupdate", function(e) {
+
+				if($("#video").attr("data-start-time")){
+					var videoStart = new Date($("#video").attr("data-start-time"));
+				}
+				else {
+	
+					var startTime = $("#video").find("video").attr("filename");
+				
+					var date = startTime.split(" ")[0].split("-").map(parseInt);
+					var time = startTime.split(" ")[1].split(".m")[0].split(";").map(parseInt);
+					var videoStart = new Date(date[1], date[2]-1, date[3], time[0], time[1], time[2] );
+					$("#video").attr("data-start-time", videoStart);
+				}
+				//console.log(videoStart);
+				//console.log(this.currentTime);
+				console.log("Current Time: " + this.currentTime());
+				var delta = new TimeDelta(this.currentTime()*1000);
+				if (edaDrop.grapher) {
+					edaDrop.grapher.updateCursor(videoStart.add(delta));
+					
+				}
+				if (edaDrop2.grapher) {
+					edaDrop2.grapher.updateCursor(videoStart.add(delta));
+					
+				}
+				if (edaDrop3.grapher) {
+					edaDrop3.grapher.updateCursor(videoStart.add(delta));
+					
+				}
+
+				//console.log(videoStart.add(delta));
+			});
+			
+			
+			$(document).on("keydown", function(e) {
+				  switch (e.which) {
+				    case 39: // right arrow
+				    //case 32: // space
+				    //case 34:  // page down
+				    {
+				      _V_("video").currentTime(_V_("video").currentTime()+1);
+				      break;
+				    }
+				    case 8: { // delete
+				      //step(d3.event.shiftKey ? +1 : -1);
+				      break;
+				    }
+				    case 37: // left arrow
+				    case 33: { // page up
+				      _V_("video").currentTime(_V_("video").currentTime()-1);
+				      break;
+				    }
+				    default: return;
+				  }
+				
+			
+			});
+		
+		};
+	
+		
+	</script>
+</html>

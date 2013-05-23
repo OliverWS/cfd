@@ -1,0 +1,76 @@
+div {
+	//border: 1px solid white;
+}
+
+.calendar-week {
+	position: relative;
+	height: 20%;
+}
+.day {
+	display: block;
+	position: relative;
+	float: left;
+	width: 14%;
+	height: inherit;
+}
+
+.btn-group {
+	
+	
+}
+.month-buttons {
+	display: inline-block;
+}
+
+.calendar-square.day.has-data .calendar-number {
+	background-color: rgba(255, 0, 0, .5);
+	width: 20%;
+	
+}
+
+.calendar-rectangle {
+	fill: red;
+	stroke: white;
+	stroke-width: 1;
+	stroke-linecap: round;
+	stroke-miterlimit: 10;
+}
+
+.calendar-square.day {
+	display: block;
+	position: relative;
+	height: 100px;
+	border: 1px solid white;
+	padding: 8px solid white;
+	background-color: #EEE;
+}
+
+.calendar-square.day.previous-month {
+	opacity: 0.5;	
+}
+
+.calendar-square canvas {
+	position: relative;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 80%;
+	stroke: red;
+	stroke-width: 5;
+}
+
+.calendar-header .day {
+	position: relative;
+	width: 14.3%;
+	height: 18px;
+	font: bold 10pt "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	text-align: left;
+	
+}
+
+.calendar-square.day .calendar-number {
+	font: bold 10pt "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	background-color: white;
+	width: 20%;
+	text-align: center;
+}
