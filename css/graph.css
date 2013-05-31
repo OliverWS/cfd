@@ -65,9 +65,10 @@ rect.cursor {
 	stroke-dasharray: 3,1;
 	
 }
-.tick {
-	stroke: #B0B0B0;
-	stroke-width: 2;
+rect.pane {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
 }
 
 text.detail-label {
@@ -124,11 +125,6 @@ text.detail-label {
 	fill: #434343;
 }
 
-
-yText {
-	fill: #434343;
-}
-
 .background {
 	stroke: #B0B0B0;
 	stroke-width: 2;
@@ -140,15 +136,15 @@ yText {
 	fill: #B6E1F2;
 }
 
-.accX {
+.acc.x {
 	stroke: red;
 	fill: none;
 }
-.accY {
+.acc.y {
 	stroke: blue;
 	fill: none;
 }
-.accZ {
+.acc.z {
 	stroke: green;
 	fill: none;
 }
